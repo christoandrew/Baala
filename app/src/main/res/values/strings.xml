@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">BaalaFinal</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="plus_generic_error">Sign in with Google is not available.</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_id">738846829519544</string>
+    <string name="title_activity_login">e-Baala</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_activity_drink_list">Drinks Menu</string>
+    <string name="title_section1">Newest</string>
+    <string name="title_section2">Popular</string>
+    <string name="title_section3">Distance</string>
+    <string name="empty">Oops no drinks available</string>
+
+    <string name="title_activity_main">e-Baala</string>
+    <string name="terms_clause">By Using Baala, you agree with Privacy Policy and Terms and Conditions</string>
+
+</resources>

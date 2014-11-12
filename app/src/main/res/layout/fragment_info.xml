@@ -1,0 +1,131 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <TextView
+            android:id="@+id/details_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:text="DETAILS"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#ffbb33" />
+
+        <TextView
+            android:id="@+id/address_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/details_label"
+            android:paddingLeft="20dp"
+
+            android:text="Address"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/bar_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/address_label"
+            android:paddingLeft="20dp"
+            android:paddingTop="5dp"
+            android:text="Copyright © 2011-2013"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <ImageView
+            android:id="@+id/location_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/details_label"
+            android:layout_marginRight="43dp"
+            android:layout_marginTop="10dp"
+
+            android:src="@drawable/ic_action_map" />
+
+        TextView
+        android:id="@+id/contacts_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bar_address"
+        android:layout_marginTop="20dp"
+        android:paddingLeft="20dp"
+        android:text="CONTACTS"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#ffbb33" />
+
+        <TextView
+            android:id="@+id/phone_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/bar_address"
+            android:layout_marginTop="10dp"
+            android:paddingLeft="20dp"
+            android:text="Phone"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/bar_contact_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/phone_label"
+            android:layout_marginLeft="20dp"
+            android:paddingTop="3dp"
+            android:text="0414 256 256"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <ImageView
+            android:id="@+id/phone_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/location_icon"
+            android:layout_alignStart="@+id/location_icon"
+            android:layout_alignTop="@+id/phone_label"
+
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_action_call" />
+
+        <TextView
+            android:id="@+id/website_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/bar_contact_phone"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:text="Website"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/bar_website"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/website_label"
+            android:layout_alignStart="@+id/website_label"
+            android:layout_below="@+id/website_label"
+            android:text="www.bar-website.com"
+            android:layout_marginBottom="50dp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <ImageView
+            android:id="@+id/search_web"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/phone_image"
+            android:layout_alignStart="@+id/phone_image"
+            android:layout_below="@+id/bar_contact_phone"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="50dp"
+
+            android:src="@drawable/ic_action_web_site" />
+
+    </RelativeLayout>
+
+</ScrollView>
