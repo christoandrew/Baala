@@ -30,7 +30,8 @@ public class RealDetailsActivity extends FragmentActivity {
      */
     SectionsPagerAdapter mSectionsPagerAdapter;
 
-    Button mCheckMenuButton;
+    private Button mCheckMenuButton;
+    private static final String TAG_BAR_ID = "bar_id";
 
     /**
      * The {@link android.support.v4.view.ViewPager} that will host the section contents.
@@ -45,6 +46,9 @@ public class RealDetailsActivity extends FragmentActivity {
         setContentView(R.layout.activity_real_details);
 
         final ActionBar actionBar = getActionBar();
+
+        Intent i = getIntent();
+        i.getStringExtra(TAG_BAR_ID);
 
         mCheckMenuButton = (Button) findViewById(R.id.check_menu_button);
         mCheckMenuButton.setOnClickListener(new View.OnClickListener() {

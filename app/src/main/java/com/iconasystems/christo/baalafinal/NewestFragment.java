@@ -80,12 +80,11 @@ public class NewestFragment extends ListFragment {
                 mBarId = (TextView) view.findViewById(R.id.bar_list_id);
                 final String bar_id = mBarId.getText().toString();
 
-
+                Intent i = new Intent(getActivity(), RealDetailsActivity.class);
+                i.putExtra(TAG_BAR_ID, bar_id);
+                startActivity(i);
             }
         });
-
-
-
 
     }
 
