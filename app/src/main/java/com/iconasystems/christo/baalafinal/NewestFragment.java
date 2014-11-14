@@ -20,6 +20,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.iconasystems.christo.utils.BarListAdapter;
 import com.iconasystems.christo.utils.JSONParser;
 import com.squareup.picasso.Picasso;
 
@@ -39,6 +40,7 @@ import java.util.List;
 public class NewestFragment extends ListFragment {
     public static final String TAG_BAR_NAME = "bar_name";
     public static final String TAG_BAR_ID = "bar_id";
+    public static final String TAG_BAR_IMAGE = "bar_image";
     public static final String TAG_BARS = "bars";
     public static final String TAG_SUCCESS = "success";
 
@@ -46,6 +48,8 @@ public class NewestFragment extends ListFragment {
     public JSONArray barsArray = null;
     public ProgressDialog progressDialog;
     public ArrayList<HashMap<String, String>> barsList;
+
+    public ImageView mBarImage;
 
     public TextView mBarId;
 
@@ -73,7 +77,7 @@ public class NewestFragment extends ListFragment {
         barsList = new ArrayList<HashMap<String, String>>();
 
         ListView listView = getListView();
-
+        mBarImage = (ImageView) listView.findViewById(R.id.bar_photo);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -119,10 +123,12 @@ public class NewestFragment extends ListFragment {
 
                         String bar_name = json.getString(TAG_BAR_NAME);
                         String bar_id = json.getString(TAG_BAR_ID);
+                        String bar_image = json.getString(TAG_BAR_IMAGE);
 
                         HashMap<String, String> hashMap = new HashMap<String, String>();
 
                         hashMap.put(TAG_BAR_NAME, bar_name);
+                        hashMap.put(TAG_BAR_IMAGE, bar_image);
                         hashMap.put(TAG_BAR_ID, bar_id);
 
                         barsList.add(hashMap);
@@ -148,12 +154,16 @@ public class NewestFragment extends ListFragment {
             super.onPostExecute(result);
             progressDialog.dismiss();
 
-            ListAdapter adapter = new SimpleAdapter(
+            BarListAdapter barListAdapter = new BarListAdapter(getActivity(), barsList);
+
+            setListAdapter(barListAdapter);
+
+            /*ListAdapter adapter = new SimpleAdapter(
                     getActivity(), barsList, R.layout.bar_list_item,
                     new String[]{TAG_BAR_NAME,  TAG_BAR_ID},
                     new int[]{R.id.bar_name_list,  R.id.bar_list_id});
 
-            setListAdapter(adapter);
+            setListAdapter(adapter);*/
         }
     }
 
