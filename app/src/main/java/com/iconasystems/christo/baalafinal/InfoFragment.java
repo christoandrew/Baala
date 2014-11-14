@@ -3,23 +3,29 @@ package com.iconasystems.christo.baalafinal;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.iconasystems.christo.utils.JSONParser;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -27,23 +33,30 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class InfoFragment extends Fragment {
-    private ProgressDialog progressDialog;
-    private TextView mBarName;
-    private TextView mBarWebsite;
-    private TextView mBarContact;
-    private String mBarId;
+    public ProgressDialog progressDialog;
+    public TextView mBarName;
+    public TextView mBarWebsite;
+    public TextView mBarContact;
+    public TextView mBarEmail;
+    public ImageView mCallBar;
+    public ImageView mSendEmail;
+    public ImageView mSearchWeb;
+    public ImageView mLocateMaps;
 
-    private static final String TAG_BAR_NAME = "bar_name";
-    private static final String TAG_BAR_WEBSITE = "bar_website";
-    private static final String TAG_BAR_CONTACT = "bar_contact";
-    private static final String TAG_BAR_IMAGE = "bar_image";
-    private static final String TAG_DATE_ADDED = "date_added";
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_BAR_ID = "bar_id";
 
-    private JSONParser jsonParser;
+    public static final String TAG_BAR_NAME = "bar_name";
+    public static final String TAG_BAR_WEBSITE = "bar_website";
+    public static final String TAG_BAR_CONTACT = "bar_contact";
+    public static final String TAG_BAR_IMAGE = "bar_image";
+    public static final String TAG_DATE_ADDED = "date_added";
+    public static final String TAG_SUCCESS = "success";
+    public static final String TAG_BAR_ID = "bar_id";
+    public static final String TAG_BAR_DETAILS = "bar_details";
 
-    private static final String url_get_info = "http://10.0.3.2/baala/get_bar_details.php";
+    public JSONParser jsonParser;
+    public JSONArray mBarDetails = null;
+
+    public static final String url_get_info = "http://10.0.3.2/baala/get_bar_details.php";
 
     public InfoFragment() {
     }
@@ -59,16 +72,56 @@ public class InfoFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        View view = getView();
 
-        mBarName = (TextView) view.findViewById(R.id.bar_name);
-        mBarContact = (TextView) view.findViewById(R.id.bar_contact_phone);
-        mBarWebsite = (TextView) view.findViewById(R.id.bar_website);
+        mBarName = (TextView) getView().findViewById(R.id.bar_detail_name);
+        mBarContact = (TextView) getView().findViewById(R.id.bar_contact_phone);
+        mBarWebsite = (TextView) getView().findViewById(R.id.bar_website);
+        mBarEmail = (TextView) getView().findViewById(R.id.bar_email);
+        mCallBar = (ImageView) getView().findViewById(R.id.call_bar);
+        mSendEmail = (ImageView) getView().findViewById(R.id.send_email);
+        mSearchWeb = (ImageView) getView().findViewById(R.id.search_web);
+        mLocateMaps = (ImageView) getView().findViewById(R.id.search_map);
 
+        mCallBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"
+                        + mBarContact.getText().toString()));
 
-        Intent i = getActivity().getIntent();
-        mBarId = i.getStringExtra(TAG_BAR_ID);
+                PackageManager packageManager = getActivity().getPackageManager();
+                List<ResolveInfo> activities = packageManager
+                        .queryIntentActivities(intent, 0);
+                boolean isIntentSafe = activities.size() > 0;
+
+                if (isIntentSafe) {
+                    startActivity(intent);
+                }
+            }
+        });
+
+        mSendEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                emailIntent.setType(HTTP.PLAIN_TEXT_TYPE);
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, mBarEmail.getText().toString());
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+
+                PackageManager packageManager = getActivity().getPackageManager();
+                List<ResolveInfo> activities = packageManager
+                        .queryIntentActivities(emailIntent, 0);
+                boolean isIntentSafe = activities.size() > 0;
+
+                // Start an activity if it's safe
+                if (isIntentSafe) {
+                    startActivity(emailIntent);
+                }
+            }
+        });
+
         jsonParser = new JSONParser();
+
+        new LoadInfo().execute();
     }
 
     class LoadInfo extends AsyncTask<String, String, String> {
@@ -85,26 +138,34 @@ public class InfoFragment extends Fragment {
 
         @Override
         protected String doInBackground(String... params) {
+            String bar_id = getActivity().getIntent().getStringExtra(TAG_BAR_ID);
+
             List<NameValuePair> data = new ArrayList<NameValuePair>();
-            data.add(new BasicNameValuePair(TAG_BAR_ID, mBarId));
+            data.add(new BasicNameValuePair(TAG_BAR_ID, bar_id));
             JSONObject jsonObject = jsonParser.makeHttpRequest(url_get_info, "GET", data);
+
+            Log.d("Bar details", jsonObject.toString());
 
             try{
                 int success = jsonObject.getInt(TAG_SUCCESS);
                 if (success == 1) {
-                    String bar_name = jsonObject.getString(TAG_BAR_NAME);
-                    String bar_website = jsonObject.getString(TAG_BAR_WEBSITE);
-                    String bar_contact = jsonObject.getString(TAG_BAR_CONTACT);
-                    String bar_image = jsonObject.getString(TAG_BAR_IMAGE);
-                    String date_added = jsonObject.getString(TAG_DATE_ADDED);
+                    mBarDetails = jsonObject.getJSONArray(TAG_BAR_DETAILS);
+                    JSONObject details = mBarDetails.getJSONObject(0);
+                    String bar_name = details.getString(TAG_BAR_NAME);
+                    String bar_website = details.getString(TAG_BAR_WEBSITE);
+                    String bar_contact = details.getString(TAG_BAR_CONTACT);
+                    String bar_image = details.getString(TAG_BAR_IMAGE);
+                    String date_added = details.getString(TAG_DATE_ADDED);
 
                     mBarWebsite.setText(bar_website);
                     mBarContact.setText(bar_contact);
+                    // mBarName.setText(bar_name);
 
                 } else {
                     // Todo get messages from the json and show in toasts
                 }
             } catch (JSONException e) {
+
                 e.printStackTrace();
             }
 
