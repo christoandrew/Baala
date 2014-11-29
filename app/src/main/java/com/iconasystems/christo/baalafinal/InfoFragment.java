@@ -2,6 +2,8 @@ package com.iconasystems.christo.baalafinal;
 
 
 import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -73,7 +75,7 @@ public class InfoFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mBarName = (TextView) getView().findViewById(R.id.bar_detail_name);
+        // mBarName = (TextView) getView().findViewById(R.id.bar_detail_name);
         mBarContact = (TextView) getView().findViewById(R.id.bar_contact_phone);
         mBarWebsite = (TextView) getView().findViewById(R.id.bar_website);
         mBarEmail = (TextView) getView().findViewById(R.id.bar_email);
@@ -82,6 +84,22 @@ public class InfoFragment extends Fragment {
         mSearchWeb = (ImageView) getView().findViewById(R.id.search_web);
         mLocateMaps = (ImageView) getView().findViewById(R.id.search_map);
 
+        mSearchWeb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String q = mBarWebsite.getText().toString();
+                Intent intent = new Intent(Intent.ACTION_WEB_SEARCH );
+                intent.putExtra(SearchManager.QUERY, q);
+
+                PackageManager packageManager = getActivity().getPackageManager();
+                List<ResolveInfo> activities = packageManager
+                        .queryIntentActivities(intent, 0);
+                boolean isIntentSafe = activities.size() > 0;
+                if (isIntentSafe) {
+                    startActivity(intent);
+                }
+            }
+        });
         mCallBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,26 +120,27 @@ public class InfoFragment extends Fragment {
         mSendEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                emailIntent.setType(HTTP.PLAIN_TEXT_TYPE);
-                emailIntent.putExtra(Intent.EXTRA_EMAIL, mBarEmail.getText().toString());
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
-
-                PackageManager packageManager = getActivity().getPackageManager();
-                List<ResolveInfo> activities = packageManager
-                        .queryIntentActivities(emailIntent, 0);
-                boolean isIntentSafe = activities.size() > 0;
-
-                // Start an activity if it's safe
-                if (isIntentSafe) {
-                    startActivity(emailIntent);
-                }
+                String email = mBarEmail.getText().toString();
+                email(getActivity(), email, "Subject", "Sent From Baala");
             }
         });
 
         jsonParser = new JSONParser();
 
         new LoadInfo().execute();
+    }
+
+    public static void email(Context context, String to, String subject, String body) {
+        StringBuilder builder = new StringBuilder("mailto:" + Uri.encode(to));
+        if (subject != null) {
+            builder.append("?subject=" + Uri.encode(Uri.encode(subject)));
+            if (body != null) {
+                builder.append("&body=" + Uri.encode(Uri.encode(body)));
+            }
+        }
+        String uri = builder.toString();
+        Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse(uri));
+        context.startActivity(intent);
     }
 
     class LoadInfo extends AsyncTask<String, String, String> {

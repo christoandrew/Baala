@@ -31,7 +31,7 @@
         android:text="@string/terms_clause"
         android:textColor="@android:color/black"
         android:id="@+id/terms_and_condition"
-        android:textSize="15sp"
+        android:textSize="10sp"
         android:padding="3dp"
         android:gravity="center"
 
@@ -62,7 +62,10 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/my_button"
         android:text="Create Account"
+        android:padding="10dp"
+        android:textColor="@android:color/white"
         android:id="@+id/register_button"
         android:layout_above="@+id/googleAuth"
         android:layout_alignLeft="@+id/googleAuth"
@@ -71,7 +74,9 @@
     <Button
         android:layout_width="140dp"
         android:layout_height="wrap_content"
+        android:background="@drawable/my_button"
         android:text="Sign In"
+        android:textColor="@android:color/white"
         android:id="@+id/sign_in_button"
         android:layout_above="@+id/googleAuth"
         android:layout_alignRight="@+id/googleAuth"

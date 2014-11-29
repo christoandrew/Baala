@@ -1,5 +1,6 @@
 package com.iconasystems.christo.baalafinal;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -7,8 +8,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
+
 
 
 public class MainActivity extends Activity {
@@ -18,9 +21,14 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
+        final ActionBar actionBar = getActionBar();
+
+
         mSignInButton = (Button) findViewById(R.id.sign_in_button);
+
         mSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -31,6 +39,8 @@ public class MainActivity extends Activity {
         mBrandName = (TextView) findViewById(R.id.brand_name);
         Typeface typefaceBrand = Typeface.createFromAsset(this.getAssets(), "fonts/Comfortaa_Bold.ttf");
         mBrandName.setTypeface(typefaceBrand);
+        Typeface ty = Typeface.createFromAsset(this.getAssets(), "fonts/Quicksand_Light.otf");
+       // mSignInButton.setTypeface(ty);
     }
 
 

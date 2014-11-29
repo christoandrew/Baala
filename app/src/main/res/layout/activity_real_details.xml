@@ -10,20 +10,26 @@
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        >
+        android:layout_centerHorizontal="true">
 
+        <android.support.v4.view.ViewPager
+            android:id="@+id/bar_detail_image"
+            android:layout_width="match_parent"
+            android:layout_height="300dp" />
 
-        <TextView
-            android:id="@+id/bar_name"
-            android:layout_width="wrap_content"
+        <!--<TextView
+            android:id="@+id/bar_detail_name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/ratingBar"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:padding="10dp"
+            android:textColor="#FF8A13"
+
+            android:background="#99000000"
             android:text="The Bar Name Goes Here"
-            android:textSize="22sp" />
+            android:textSize="50sp" />-->
 
         <RatingBar
             android:id="@+id/ratingBar"
@@ -32,9 +38,29 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="20 of 30"
+            android:id="@+id/image_position"
+            android:layout_alignBottom="@+id/imageView"
+            android:layout_toLeftOf="@+id/imageView"
+            android:layout_toStartOf="@+id/imageView" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_action_camera"
+            android:layout_alignTop="@+id/ratingBar"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
     </RelativeLayout>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/pictogram"
@@ -51,6 +77,7 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
     </LinearLayout>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

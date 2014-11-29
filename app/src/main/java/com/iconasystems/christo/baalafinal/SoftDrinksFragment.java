@@ -3,6 +3,7 @@ package com.iconasystems.christo.baalafinal;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -42,7 +43,7 @@ public class SoftDrinksFragment extends ListFragment {
     private static final String TAG_DRINK_ID = "drink_id";
     private static final String TAG_DRINK_PRICE = "drink_price";
     private static final String TAG_SUCCESS = "success";
-    private static final String TAG_BAR_ID = "1";
+    private static final String TAG_BAR_ID = "bar_id";
     private static final String TAG_DRINK_MENU = "drink_menu";
     private static final String TAG_DRINK_IMAGE = "drink_image";
 
@@ -53,7 +54,7 @@ public class SoftDrinksFragment extends ListFragment {
     private String[] urls;
 
     private ImageView mBeerPhoto;
-
+    private String bar_id;
 
     public SoftDrinksFragment() {
         // Required empty public constructor
@@ -71,6 +72,9 @@ public class SoftDrinksFragment extends ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         drinksList = new ArrayList<HashMap<String, String>>();
+
+        Intent i = getActivity().getIntent();
+        bar_id = i.getStringExtra(TAG_BAR_ID);
         final ListView lv = getListView();
 
         mBeerPhoto = (ImageView) lv.findViewById(R.id.beer_photo);
@@ -106,7 +110,7 @@ public class SoftDrinksFragment extends ListFragment {
         protected String doInBackground(String... params) {
 
             List<NameValuePair> data = new ArrayList<NameValuePair>();
-            data.add(new BasicNameValuePair("bar_id", TAG_BAR_ID));
+            data.add(new BasicNameValuePair(TAG_BAR_ID, bar_id));
             try {
                 JSONObject jsonObject = jsonParser.makeHttpRequest(url_get_drink_menu, "GET", data);
                 Log.d("Drinks Menu", jsonObject.toString());

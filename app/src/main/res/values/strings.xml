@@ -8,14 +8,35 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="app_id">738846829519544</string>
     <string name="title_activity_login">e-Baala</string>
-    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_activity_home">Baala</string>
     <string name="title_activity_drink_list">Drinks Menu</string>
-    <string name="title_section1">Newest</string>
-    <string name="title_section2">Popular</string>
-    <string name="title_section3">Distance</string>
+    <string name="title_section1">Home</string>
+    <string name="title_section2">Bars</string>
+    <string name="title_section3">Favorites</string>
+    <string name="title_section4">Map</string>
     <string name="empty">Oops no drinks available</string>
-
     <string name="title_activity_main">e-Baala</string>
     <string name="terms_clause">By Using Baala, you agree with Privacy Policy and Terms and Conditions</string>
+    <string name="title_activity_details">Bar Details</string>
+    <string name="drawer_open">Drawer Open</string>
+    <string name="drawer_close">Drawer Closed</string>
+    <string name="search_bar_hint">Search Bars</string>
+
+    <string-array name="action_list">
+        <item>Find A Bar</item>
+        <item>Find A Drink</item>
+        <item>Reviews</item>
+        <item>About</item>
+        <item>Feedback</item>
+    </string-array>
+
+    <string name="title_activity_search">Search Bars</string>
+    <string name="title_activity_reviews">Reviews</string>
+    <string name="title_activity_about">Baala</string>
+    <string name="title_activity_search_drinks">Search Drinks</string>
+    <string name="action_bar_search">Search</string>
+    <string name="action_add_to_fav">Favorite</string>
+    <string name="action_share">Share</string>
+    <string name="action_review">Submit Review</string>
 
 </resources>

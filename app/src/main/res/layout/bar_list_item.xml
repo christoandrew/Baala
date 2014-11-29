@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="250dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Bar Name"
-        android:id="@+id/bar_name_list"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+    <ImageView
+        android:id="@+id/bar_photo"
+        android:layout_width="fill_parent"
+        android:src="@drawable/panamera_bar"
+        android:layout_height="300dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -21,4 +17,18 @@
         android:layout_below="@+id/bar_name_list"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:padding="10dp"
+        android:textColor="#FF8A13"
+        android:background="#99000000"
+        android:text="The Bar Name Goes Here"
+        android:textSize="40sp"
+        android:id="@+id/bar_list_name"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/bar_list_id"
+        android:layout_toEndOf="@+id/bar_list_id" />
 </RelativeLayout>

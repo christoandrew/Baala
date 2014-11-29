@@ -80,13 +80,16 @@ public class DrinkListActivity extends FragmentActivity {
             if (position == 5){
                 title = "Vodka";
             }
+            if (position == 6){
+                title = "Beer";
+            }
 
             return title;
         }
 
         @Override
         public int getCount() {
-            return 6;
+            return 7;
         }
 
         @Override
@@ -110,6 +113,10 @@ public class DrinkListActivity extends FragmentActivity {
             if (position == 5){
                 fragment = new VodkaFragment();
             }
+            if (position == 6){
+                fragment = new BeerFragment();
+            }
+
 
             return fragment;
         }

@@ -2,6 +2,8 @@ package com.iconasystems.christo.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +12,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.iconasystems.christo.baalafinal.R;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.nostra13.universalimageloader.core.display.RoundedVignetteBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Christo on 11/14/2014.
@@ -25,12 +37,18 @@ public class BarListAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private ImageView mBarImage;
     private TextView mBarId;
+    private TextView mBarName;
+    Typeface typeface;
+    private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 
-    private static final String TAG_DRINK_IMAGE = "bar_image";
+    private static final String TAG_BAR_IMAGE = "bar_image";
+    private static final String TAG_BAR_NAME = "bar_name";
+    private DisplayImageOptions options;
 
-    public BarListAdapter(Activity activity, ArrayList<HashMap<String, String>> barsList) {
+    public BarListAdapter(Activity activity, ArrayList<HashMap<String, String>> barsList, Typeface typeface) {
         this.activity = activity;
         this.barsList = barsList;
+        this.typeface = typeface;
     }
 
     /**
@@ -88,6 +106,15 @@ public class BarListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View view  = convertView;
 
+        options = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.ic_empty)
+                .showImageForEmptyUri(R.drawable.ic_empty)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .displayer(new RoundedVignetteBitmapDisplayer(10, 5))
+                .showImageOnFail(R.drawable.ic_error)
+                .build();
+
         if (inflater == null)
             inflater = (LayoutInflater) activity
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -95,17 +122,40 @@ public class BarListAdapter extends BaseAdapter {
 
         mBarImage = (ImageView) view.findViewById(R.id.bar_photo);
         mBarId = (TextView) view.findViewById(R.id.bar_list_id);
+        mBarName = (TextView) view.findViewById(R.id.bar_list_name);
         HashMap<String, String> map;
         map = barsList.get(position);
 
         String bar_id = map.get(TAG_BAR_ID);
-        String image_url = map.get(TAG_DRINK_IMAGE);
+        String image_url = map.get(TAG_BAR_IMAGE);
+        String bar_name = map.get(TAG_BAR_NAME);
         mBarId.setText(bar_id);
+        mBarName.setText(bar_name);
+        mBarName.setTypeface(typeface);
 
-            Picasso.with(activity.getApplicationContext())
+        ImageLoader.getInstance().displayImage(image_url, mBarImage, options, animateFirstListener);
+
+         /*Picasso.with(activity.getApplicationContext())
                     .load(image_url)
-                    .into(mBarImage);
+                    .into(mBarImage);*/
 
         return view;
+    }
+
+    private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
+
+        static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
+
+        @Override
+        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+            if (loadedImage != null) {
+                ImageView imageView = (ImageView) view;
+                boolean firstDisplay = !displayedImages.contains(imageUri);
+                if (firstDisplay) {
+                    FadeInBitmapDisplayer.animate(imageView, 500);
+                    displayedImages.add(imageUri);
+                }
+            }
+        }
     }
 }

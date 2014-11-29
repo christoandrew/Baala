@@ -164,6 +164,7 @@ public class LoginActivity extends Activity implements PlusClient.ConnectionCall
                     session.createLoginSession(username,password,user_id);
 
                     Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+                    i.putExtra(TAG_USER_ID, user_id);
                     startActivity(i);
 
                 } else if (success == 0) {

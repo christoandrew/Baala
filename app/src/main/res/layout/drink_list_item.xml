@@ -11,8 +11,8 @@
         android:layout_height="wrap_content" />
 
     <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="60dp"
+        android:layout_height="80dp"
         android:id="@+id/beer_photo"
         android:src="@drawable/ic_action_error"
         android:layout_margin="6dp"
@@ -34,25 +34,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Drink Description"
+        android:text="Price (Ugx) : "
+        android:layout_marginBottom="30dp"
         android:id="@+id/drink_description"
-        android:layout_below="@+id/drink_name"
         android:layout_alignLeft="@+id/drink_name"
         android:layout_alignStart="@+id/drink_name"
         android:layout_alignBottom="@+id/beer_photo"
-        android:layout_toStartOf="@+id/drink_price"
-        android:layout_toLeftOf="@+id/drink_price" />
+
+        />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="5000"
         android:id="@+id/drink_price"
-        android:layout_toEndOf="@+id/drink_name"
-        android:layout_alignBottom="@+id/beer_photo"
+        android:layout_alignBottom="@+id/drink_description"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_toRightOf="@+id/drink_name"
-        android:layout_alignTop="@+id/drink_description" />
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>
