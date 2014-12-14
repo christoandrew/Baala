@@ -99,7 +99,7 @@ public class ListAdapter extends BaseAdapter {
 
         mDrinkId.setText(map.get(TAG_DRINK_ID));
         mDrinkName.setText(map.get(TAG_DRINK_NAME));
-        mDrinkPrice.setText(map.get(TAG_DRINK_PRICE));
+        mDrinkPrice.setText(new StringBuilder().append("Shs:").append(map.get(TAG_DRINK_PRICE)));
 
         String image_url = map.get(TAG_DRINK_IMAGE);
 

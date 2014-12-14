@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
+    android:scrollbarStyle="insideOverlay"
     tools:context="com.iconasystems.christo.baala.RealDetailsActivity">
 
     <RelativeLayout
@@ -17,6 +18,11 @@
             android:layout_width="match_parent"
             android:layout_height="300dp" />
 
+        <com.viewpagerindicator.CirclePageIndicator
+            android:id="@+id/circle_indicator"
+            android:padding="10dip"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent" />
         <!--<TextView
             android:id="@+id/bar_detail_name"
             android:layout_width="match_parent"
@@ -43,7 +49,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="20 of 30"
             android:id="@+id/image_position"
             android:layout_alignBottom="@+id/imageView"
             android:layout_toLeftOf="@+id/imageView"
@@ -58,9 +63,10 @@
             android:layout_alignTop="@+id/ratingBar"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
+
     </RelativeLayout>
 
-  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/pictogram"

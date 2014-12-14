@@ -58,7 +58,7 @@ public class InfoFragment extends Fragment {
     public JSONParser jsonParser;
     public JSONArray mBarDetails = null;
 
-    public static final String url_get_info = "http://10.0.3.2/baala/get_bar_details.php";
+    public static final String url_get_info = "http://api.baala-online.netii.net/get_bar_details.php";
 
     public InfoFragment() {
     }
@@ -147,11 +147,11 @@ public class InfoFragment extends Fragment {
         @Override
         public void onPreExecute(){
             super.onPreExecute();
-            progressDialog = new ProgressDialog(getActivity());
+            /*progressDialog = new ProgressDialog(getActivity());
             progressDialog.setMessage("Loading Details...Please Wait");
             progressDialog.setIndeterminate(false);
             progressDialog.setCancelable(false);
-            progressDialog.show();
+            progressDialog.show();*/
 
         }
 
@@ -194,7 +194,7 @@ public class InfoFragment extends Fragment {
         @Override
         public void onPostExecute(String result) {
             super.onPostExecute(result);
-            progressDialog.dismiss();
+            /*progressDialog.dismiss();*/
 
         }
     }

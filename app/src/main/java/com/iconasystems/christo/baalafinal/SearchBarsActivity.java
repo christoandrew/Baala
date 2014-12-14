@@ -54,12 +54,13 @@ public class SearchBarsActivity extends ListActivity implements SearchView.OnQue
     private Typeface mTypeface;
 
     private JSONParser jsonParser;
-    private String url_search = "http://10.0.3.2/baala/find_bar.php";
+    private String url_search = "http://api.baala-online.netii.net/find_bar.php";
     private JSONArray barsArray = null;
 
 
     public ProgressDialog progressDialog;
     public ArrayList<HashMap<String, String>> barsList;
+    private Typeface mTypefaceDesc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +84,7 @@ public class SearchBarsActivity extends ListActivity implements SearchView.OnQue
 
         jsonParser = new JSONParser();
         mTypeface = Typeface.createFromAsset(this.getAssets(), "fonts/Roboto-Thin.ttf");
+        mTypefaceDesc = Typeface.createFromAsset(this.getAssets(), "fonts/Belle-West.otf");
         barsList = new ArrayList<HashMap<String, String>>();
 
     }
@@ -243,8 +245,9 @@ public class SearchBarsActivity extends ListActivity implements SearchView.OnQue
             super.onPostExecute(result);
             progressDialog.dismiss();
 
-            BarListAdapter barListAdapter = new BarListAdapter(SearchBarsActivity.this, barsList, mTypeface);
+            BarListAdapter barListAdapter = new BarListAdapter(SearchBarsActivity.this, barsList, mTypeface, mTypefaceDesc);
             setListAdapter(barListAdapter);
+            barListAdapter.notifyDataSetChanged();
         }
     }
 }

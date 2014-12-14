@@ -1,21 +1,30 @@
 package com.iconasystems.christo.baalafinal;
 
 
+import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Interpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.iconasystems.christo.utils.JSONParser;
@@ -31,6 +40,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,6 +49,8 @@ import java.util.List;
 public class GinFragment extends ListFragment {
     private ProgressDialog progressDialog;
     private JSONParser jsonParser = new JSONParser();
+
+    private SmoothProgressDrawable d;
 
     private static final String TAG_DRINK_NAME = "drink_name";
     private static final String TAG_DRINK_ID = "drink_id";
@@ -47,7 +60,7 @@ public class GinFragment extends ListFragment {
     private static final String TAG_DRINK_MENU = "drink_menu";
     private static final String TAG_DRINK_IMAGE = "drink_image";
 
-    private static final String url_get_drink_menu = "http://10.0.3.2/baala/get_gin.php";
+    private static final String url_get_drink_menu = "http://api.baala-online.netii.net/get_gin.php";
 
     private JSONArray drinkMenu = null;
     private ArrayList<HashMap<String, String>> drinksList;
@@ -55,6 +68,7 @@ public class GinFragment extends ListFragment {
 
     private ImageView mBeerPhoto;
     private String bar_id;
+    private ProgressBar mProgressBar;
 
     public GinFragment() {
         // Required empty public constructor
@@ -65,7 +79,7 @@ public class GinFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_gin, container, false);
+        return inflater.inflate(R.layout.fragment_spirits, container, false);
     }
 
     @Override
@@ -78,6 +92,46 @@ public class GinFragment extends ListFragment {
         bar_id = i.getStringExtra(TAG_BAR_ID);
 
         mBeerPhoto = (ImageView) lv.findViewById(R.id.beer_photo);
+
+        mProgressBar = new ProgressBar(getActivity(), null, R.attr.spbStyle);
+        mProgressBar.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 24));
+        mProgressBar.setIndeterminate(true);
+        mProgressBar.setVisibility(View.GONE);
+
+        final FrameLayout decorView = (FrameLayout) getActivity().getWindow().getDecorView();
+
+        SmoothProgressDrawable.Builder builder = new SmoothProgressDrawable.Builder(getActivity());
+        builder.speed(5)
+                .sectionsCount(3)
+                .separatorLength(dpToPx(0))
+                .width(dpToPx(4))
+                .mirrorMode(true)
+                .reversed(true);
+
+        Interpolator interpolator = new AccelerateDecelerateInterpolator();
+        builder.interpolator(interpolator);
+
+        builder.colors(this.getResources().getIntArray(R.array.uganda));
+        d = builder.build();
+
+        d.setBounds(mProgressBar.getIndeterminateDrawable().getBounds());
+        mProgressBar.setIndeterminateDrawable(d);
+        d.start();
+
+        decorView.addView(mProgressBar);
+
+        final ViewTreeObserver observer = mProgressBar.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+            @Override
+            public void onGlobalLayout() {
+                View contentView = decorView.findViewById(android.R.id.content);
+                mProgressBar.setY(contentView.getY() - 10);
+
+                ViewTreeObserver observer1 = mProgressBar.getViewTreeObserver();
+                observer1.removeOnGlobalLayoutListener(this);
+            }
+        });
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
@@ -94,16 +148,24 @@ public class GinFragment extends ListFragment {
         }
     }
 
+    public int dpToPx(int dp) {
+        Resources r = getActivity().getResources();
+        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                dp, r.getDisplayMetrics());
+        return px;
+    }
+
 
     class LoadBars extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = new ProgressDialog(getActivity());
+            /*progressDialog = new ProgressDialog(getActivity());
             progressDialog.setMessage("Loading Bars...Please Wait");
             progressDialog.setCancelable(false);
             progressDialog.setIndeterminate(false);
-            progressDialog.show();
+            progressDialog.show();*/
+            mProgressBar.setVisibility(View.VISIBLE);
 
         }
 
@@ -166,10 +228,11 @@ public class GinFragment extends ListFragment {
         @Override
         protected void onPostExecute(String result) {
             // super.onPostExecute(result);
-            progressDialog.dismiss();
+            /*progressDialog.dismiss();*/
+            mProgressBar.setVisibility(View.GONE);
 
             ListAdapter listAdapter = new ListAdapter(getActivity(), drinksList);
-
+            listAdapter.notifyDataSetChanged();
             setListAdapter(listAdapter);
 
             /*ListAdapter listAdapter = new SimpleAdapter(DrinkListActivity.this, drinksList,

@@ -1,22 +1,33 @@
 package com.iconasystems.christo.baalafinal;
 
 
+import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +44,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,6 +59,8 @@ public class BarsFragment extends ListFragment /*implements ActionBar.OnNavigati
     private static final String TAG_IMAGES = "images";
     private static final String TAG_IMAGE = "image";
     private static final String TAG_USER_ID = "user_id";
+    private static final String TAG_DESCRIPTION = "description";
+    private static final String TAG_POPULARITY = "popularity";
 
     public JSONParser jsonParser;
     public JSONArray barsArray = null;
@@ -57,10 +72,15 @@ public class BarsFragment extends ListFragment /*implements ActionBar.OnNavigati
     public ImageView mBarImage;
     public TextView mBarName;
     public TextView mBarId;
+    public ProgressBar mProgressBar;
 
-    public static final String url_get_newest_bars = "http://10.0.3.2/baala/get_bars.php";
-    private Typeface mTypeface;
+    private SmoothProgressDrawable d;
+    public static final String url_get_newest_bars = "http://api.baala-online.netii.net/get_bars.php";
+    private Typeface mTypefaceName;
+    private Typeface mTypefaceDesc;
     private String[] imageUrls;
+    private View rootView;
+    private String[] colors;
 
     public BarsFragment() {
         // Required empty public constructor
@@ -71,7 +91,8 @@ public class BarsFragment extends ListFragment /*implements ActionBar.OnNavigati
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_bars, container, false);
+        rootView = inflater.inflate(R.layout.fragment_bars, container, false);
+        return rootView;
 
     }
 
@@ -79,26 +100,8 @@ public class BarsFragment extends ListFragment /*implements ActionBar.OnNavigati
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        jsonParser = new JSONParser();
-        new LoadNewestBars().execute();
-        barsList = new ArrayList<HashMap<String, String>>();
-
-        user_id = getActivity().getIntent().getStringExtra(TAG_USER_ID);
-
-        ActionBar actionBar = getActivity().getActionBar();
-
-        mTypeface = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Thin.ttf");
-        // actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-
-            /*actionBar.setListNavigationCallbacks(
-                    ArrayAdapter.createFromResource(
-                            actionBar.getThemedContext(),
-                            R.array.action_list,
-                            android.R.layout.simple_spinner_dropdown_item),
-                    this);*/
-
         ListView listView = getListView();
-        mBarImage = (ImageView) listView.findViewById(R.id.bar_photo);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -112,37 +115,70 @@ public class BarsFragment extends ListFragment /*implements ActionBar.OnNavigati
             }
         });
 
+        jsonParser = new JSONParser();
+
+
+
+        barsList = new ArrayList<HashMap<String, String>>();
+
+        user_id = getActivity().getIntent().getStringExtra(TAG_USER_ID);
+        mProgressBar = new ProgressBar(getActivity(), null, R.attr.spbStyle);
+        mProgressBar.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 24));
+        mProgressBar.setIndeterminate(true);
+        mProgressBar.setVisibility(View.GONE);
+
+        final FrameLayout decorView = (FrameLayout) getActivity().getWindow().getDecorView();
+
+        SmoothProgressDrawable.Builder builder = new SmoothProgressDrawable.Builder(getActivity());
+        builder.speed(5)
+                .sectionsCount(3)
+                .separatorLength(dpToPx(0))
+                .width(dpToPx(4))
+                .mirrorMode(true)
+                .reversed(true);
+
+        Interpolator interpolator = new AccelerateDecelerateInterpolator();
+        builder.interpolator(interpolator);
+
+        builder.colors(this.getResources().getIntArray(R.array.uganda));
+        d = builder.build();
+
+        d.setBounds(mProgressBar.getIndeterminateDrawable().getBounds());
+        mProgressBar.setIndeterminateDrawable(d);
+        d.start();
+
+        decorView.addView(mProgressBar);
+
+        final ViewTreeObserver observer = mProgressBar.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+            @Override
+            public void onGlobalLayout() {
+                View contentView = decorView.findViewById(android.R.id.content);
+                mProgressBar.setY(contentView.getY() - 10);
+
+                ViewTreeObserver observer1 = mProgressBar.getViewTreeObserver();
+                observer1.removeOnGlobalLayoutListener(this);
+            }
+        });
+
+        new LoadNewestBars().execute();
+
+        colors = new String[]{"#00000", "#FFFF00", "#FF0000"};
+
+        mTypefaceName = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Thin.ttf");
+        mTypefaceDesc = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Belle-West.otf");
+
+
+        mBarImage = (ImageView) listView.findViewById(R.id.bar_photo);
     }
 
-        /*@Override
-        public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-            Fragment newFragment = null;
-            switch (itemPosition) {
-                case 0:
-                    newFragment = new NewestFragment();
-                    break;
-                case 1:
-                    newFragment = new PopularFragment();
-                    break;
-
-                default:
-            }
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, newFragment).commit();
-
-            return true;
-        }*/
-
-
     class LoadNewestBars extends AsyncTask<String, String, String> {
+
         @Override
         public void onPreExecute() {
             super.onPreExecute();
-            progressDialog = new ProgressDialog(getActivity());
-            progressDialog.setMessage("Loading Bars...Please Wait");
-            progressDialog.setIndeterminate(false);
-            progressDialog.setCancelable(false);
-            progressDialog.show();
+            mProgressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -162,19 +198,27 @@ public class BarsFragment extends ListFragment /*implements ActionBar.OnNavigati
                     for (int i = 0; i < barsArray.length(); i++) {
                         JSONObject json = barsArray.getJSONObject(i);
 
+                        Log.d("Bar Details", json.toString());
+
                         String bar_name = json.getString(TAG_BAR_NAME);
                         String bar_id = json.getString(TAG_BAR_ID);
                         String bar_image = json.getString(TAG_BAR_IMAGE);
+                        String description = json.getString(TAG_DESCRIPTION);
+                        String popularity = json.getString(TAG_POPULARITY);
 
-                       // Log.d("Image Urls" , "Total Images = "+imageUrls.length);
+                        // Log.d("Image Urls" , "Total Images = "+imageUrls.length);
 
                         HashMap<String, String> hashMap = new HashMap<String, String>();
 
                         hashMap.put(TAG_BAR_NAME, bar_name);
                         hashMap.put(TAG_BAR_IMAGE, bar_image);
                         hashMap.put(TAG_BAR_ID, bar_id);
+                        hashMap.put(TAG_DESCRIPTION, description);
+                        hashMap.put(TAG_POPULARITY, popularity);
 
                         barsList.add(hashMap);
+
+                        Log.d("Details", barsList.toString());
                     }
                 } else {
                     getActivity().runOnUiThread(new Runnable() {
@@ -195,19 +239,21 @@ public class BarsFragment extends ListFragment /*implements ActionBar.OnNavigati
         @Override
         public void onPostExecute(String result) {
             super.onPostExecute(result);
-            progressDialog.dismiss();
+            /*progressDialog.dismiss();*/
 
-            BarListAdapter barListAdapter = new BarListAdapter(getActivity(), barsList, mTypeface);
-
+            mProgressBar.setVisibility(View.GONE);
+            /*d.stop();*/
+            BarListAdapter barListAdapter = new BarListAdapter(getActivity(), barsList, mTypefaceName, mTypefaceDesc);
             setListAdapter(barListAdapter);
-
-                /*ListAdapter adapter = new SimpleAdapter(
-                        getActivity(), barsList, R.layout.bar_list_item,
-                        new String[]{TAG_BAR_NAME,  TAG_BAR_ID},
-                        new int[]{R.id.bar_name_list,  R.id.bar_list_id});
-
-                setListAdapter(adapter);*/
+            barListAdapter.notifyDataSetChanged();
         }
+    }
+
+    public int dpToPx(int dp) {
+        Resources r = getActivity().getResources();
+        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                dp, r.getDisplayMetrics());
+        return px;
     }
 
 }

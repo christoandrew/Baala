@@ -1,12 +1,15 @@
 package com.iconasystems.christo.baalafinal;
 
+import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,24 +19,36 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.iconasystems.christo.avatar.AvatarDrawableFactory;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.viewpagerindicator.IconPagerAdapter;
+import com.viewpagerindicator.TabPageIndicator;
 
 import java.util.Locale;
+
+import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
 
 
 public class HomeActivity extends FragmentActivity implements ActionBar.TabListener {
@@ -58,6 +73,9 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
      * The {@link android.support.v4.view.ViewPager} that will host the section contents.
      */
     ViewPager mViewPager;
+    private LayoutInflater inflater;
+    private SmoothProgressDrawable d;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,15 +87,8 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         getActionBar().setHomeButtonEnabled(true);
         actions = getResources().getStringArray(R.array.action_list);
 
-        final FragmentManager fragmentManager = getSupportFragmentManager();
-
-        /*if (savedInstanceState == null) {
-            fragmentManager.beginTransaction()
-                    .replace(android.R.id.content, new BarsFragment()).commit();
-        }*/
-
         mListView = (ListView) findViewById(R.id.list_actions);
-        mListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, actions));
+        mListView.setAdapter(new ActionAdapter(getApplicationContext()));
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -92,8 +103,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                 if (position == 1) {
                     Intent j = new Intent(HomeActivity.this, SearchDrinksActivity.class);
                     startActivity(j);
-                    /*fragmentManager.beginTransaction()
-                            .replace(android.R.id.content, new FavoritesFragment()).commit();*/
                     return;
                 }
                 if (position == 2) {
@@ -128,7 +137,12 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), getApplicationContext());
+
+        mViewPager = (ViewPager) findViewById(R.id.pager_home);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+        TabPageIndicator indicator = (TabPageIndicator)findViewById(R.id.indicator_home);
+        indicator.setViewPager(mViewPager);
 
         mActionBarDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
@@ -149,32 +163,6 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
         };
 
         mDrawerLayout.setDrawerListener(mActionBarDrawerToggle);
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        // When swiping between different sections, select the corresponding
-        // tab. We can also use ActionBar.Tab#select() to do this if we have
-        // a reference to the Tab.
-        /*mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                actionBar.setSelectedNavigationItem(position);
-            }
-        });*/
-
-        // For each of the sections in the app, add a tab to the action bar.
-        /*for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-            // Create a tab with text corresponding to the page title defined by
-            // the adapter. Also specify this Activity object, which implements
-            // the TabListener interface, as the callback (listener) for when
-            // this tab is selected.
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(mSectionsPagerAdapter.getPageTitle(i))
-                            .setTabListener(this));
-        }*/
     }
 
     @Override
@@ -237,10 +225,14 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
+    public class SectionsPagerAdapter extends FragmentStatePagerAdapter implements IconPagerAdapter{
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        private final Context context;
+        int[] icons = {R.drawable.ic_action_home, R.drawable.ic_action_arena,
+                R.drawable.ic_action_fav, R.drawable.ic_action_map_location };
+        public SectionsPagerAdapter(FragmentManager fm, Context context) {
             super(fm);
+            this.context = context;
         }
 
         @Override
@@ -262,6 +254,16 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
                 fragment = new DistanceFragment();
             }
             return fragment;
+        }
+
+        /**
+         * Get icon representing the page at {@code index} in the adapter.
+         *
+         * @param index
+         */
+        @Override
+        public int getIconResId(int index) {
+            return icons[index];
         }
 
         @Override
@@ -305,11 +307,18 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     class ActionAdapter extends BaseAdapter {
+        private Context context;
         String[] actions;
-        int[] action_icons = {R.drawable.ic_action_bar, R.drawable.ic_action_bottle};
+        int[] action_icons = {R.drawable.ic_action_arena_list,
+                R.drawable.ic_action_beer_bottle,
+                R.drawable.ic_action_survey,
+                R.drawable.ic_action_info,
+                R.drawable.ic_action_feedback
+        };
 
         ActionAdapter(Context context) {
             actions = context.getResources().getStringArray(R.array.action_list);
+            this.context = context;
         }
 
         /**
@@ -319,7 +328,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
          */
         @Override
         public int getCount() {
-            return 0;
+            return actions.length;
         }
 
         /**
@@ -331,7 +340,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
          */
         @Override
         public Object getItem(int position) {
-            return null;
+            return actions[position];
         }
 
         /**
@@ -342,7 +351,7 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
          */
         @Override
         public long getItemId(int position) {
-            return 0;
+            return position;
         }
 
         /**
@@ -365,7 +374,18 @@ public class HomeActivity extends FragmentActivity implements ActionBar.TabListe
          */
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            return null;
+            View rootView = convertView;
+            if (inflater == null)
+                inflater = (LayoutInflater) context
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            if (rootView == null) rootView = inflater.inflate(R.layout.action_list_item, null);
+
+            TextView mActionName = (TextView) rootView.findViewById(R.id.action_name);
+            ImageView mActionImage = (ImageView) rootView.findViewById(R.id.action_icon);
+
+            mActionName.setText(actions[position]);
+            mActionImage.setImageResource(action_icons[position]);
+            return rootView;
         }
     }
 

@@ -34,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Price (Ugx) : "
+        android:text="Price: "
         android:layout_marginBottom="30dp"
         android:id="@+id/drink_description"
         android:layout_alignLeft="@+id/drink_name"
@@ -48,6 +48,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/price"
+        android:text="5000"
         android:layout_alignBottom="@+id/drink_description"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
@@ -61,5 +62,14 @@
         android:layout_below="@+id/price"
         android:layout_alignLeft="@+id/drink_description"
         android:layout_alignStart="@+id/drink_description" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/price_tag_image"
+        android:src="@drawable/ic_action_tag"
+        android:layout_toStartOf="@+id/price"
+        android:layout_alignTop="@+id/price"
+        android:layout_toLeftOf="@+id/price" />
 
 </RelativeLayout>

@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/warm_colors_background"
+    android:background="@drawable/home_background"
     tools:context="com.iconasystems.christo.baalafinal.MainActivity">
 
 

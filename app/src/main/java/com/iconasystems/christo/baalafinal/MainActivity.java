@@ -17,6 +17,7 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
     private TextView mBrandName;
     private Button mSignInButton;
+    private Button mRegisterButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +27,14 @@ public class MainActivity extends Activity {
 
         final ActionBar actionBar = getActionBar();
 
-
+        mRegisterButton = (Button) findViewById(R.id.register_button);
+        mRegisterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent register = new Intent(MainActivity.this, RegisterActivity.class);
+                startActivity(register);
+            }
+        });
         mSignInButton = (Button) findViewById(R.id.sign_in_button);
 
         mSignInButton.setOnClickListener(new View.OnClickListener() {

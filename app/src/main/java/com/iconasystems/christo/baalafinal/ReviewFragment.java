@@ -45,7 +45,7 @@ public class ReviewFragment extends ListFragment {
 
     public ArrayList<HashMap<String, String>> mReviewsList;
 
-    public static final String url_get_reviews = "http://10.0.3.2/baala/get_reviews.php";
+    public static final String url_get_reviews = "http://api.baala-online.netii.net/get_reviews.php";
 
     public ReviewFragment() {
     }

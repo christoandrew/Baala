@@ -19,4 +19,20 @@
 		android:layout_gravity="center"
 		android:visibility="gone" />
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/next_button"
+        android:layout_marginTop="100dp"
+        android:src="@drawable/ic_forward_button"
+        android:layout_gravity="right|top" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:id="@+id/prev_button"
+        android:src="@drawable/ic_back_button"
+        android:layout_gravity="left|top" />
+
 </FrameLayout>

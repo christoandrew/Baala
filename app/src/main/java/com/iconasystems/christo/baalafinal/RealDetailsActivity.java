@@ -40,6 +40,7 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.squareup.picasso.Picasso;
+import com.viewpagerindicator.CirclePageIndicator;
 import com.viewpagerindicator.TabPageIndicator;
 
 import org.apache.http.NameValuePair;
@@ -105,6 +106,10 @@ public class RealDetailsActivity extends FragmentActivity {
     private String bar_image;
 
     private DisplayImageOptions options;
+    private CirclePageIndicator mIndicator;
+    private ImageView mNextButton;
+    private ImageView mPrevButton;
+    private int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +145,8 @@ public class RealDetailsActivity extends FragmentActivity {
         mBarImage = (ViewPager) findViewById(R.id.bar_detail_image);
         // mBarName = (TextView) findViewById(R.id.bar_detail_name);
         // mBarName.setTypeface(mTypeface);
+
+
         mBarRating = (RatingBar) findViewById(R.id.ratingBar);
         mBarRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -152,6 +159,7 @@ public class RealDetailsActivity extends FragmentActivity {
 
         mPhotoPosition = (TextView) findViewById(R.id.image_position);
         mCheckMenuButton = (Button) findViewById(R.id.check_menu_button);
+
         mCheckMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -163,6 +171,7 @@ public class RealDetailsActivity extends FragmentActivity {
 
         final TabPageIndicator tabPageIndicator = (TabPageIndicator) findViewById(R.id.indicator);
 
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -171,7 +180,10 @@ public class RealDetailsActivity extends FragmentActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager_divided);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mIndicator = (CirclePageIndicator) findViewById(R.id.circle_indicator);
 
+
+        mIndicator.setViewPager(mViewPager);
         tabPageIndicator.setViewPager(mViewPager);
     }
 
@@ -393,8 +405,10 @@ public class RealDetailsActivity extends FragmentActivity {
         protected void onPostExecute(JSONArray result) {
             super.onPostExecute(result);
             progressDialog.dismiss();
+            ImageAdapter imageAdapter = new ImageAdapter(result);
+
             //Picasso.with(getApplicationContext()).load(bar_image).into(mBarImage);
-            mBarImage.setAdapter(new ImageAdapter(result));
+            mBarImage.setAdapter(imageAdapter);
         }
 
     }
@@ -404,6 +418,7 @@ public class RealDetailsActivity extends FragmentActivity {
         private LayoutInflater inflater;
         private JSONArray image_urls = null;
         private String image_url;
+        private int image_number;
 
 
         ImageAdapter(JSONArray urls) {
@@ -427,10 +442,28 @@ public class RealDetailsActivity extends FragmentActivity {
             assert imageLayout != null;
             ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
             final ProgressBar spinner = (ProgressBar) imageLayout.findViewById(R.id.loading);
+            mPrevButton = (ImageView) imageLayout.findViewById(R.id.prev_button);
+            mNextButton = (ImageView) imageLayout.findViewById(R.id.next_button);
+
+            mPrevButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+
+            mNextButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
             mPhotoPosition.setText(new StringBuilder().append( position + 1 ).append(" of ").append(image_urls.length()) );
+
+
             try {
                 JSONObject json = image_urls.getJSONObject(position);
-                int image_number = position+1;
+                image_number = position+1;
                 image_url = json.getString("image_"+image_number);
                 Log.d("Baala Image URL", json.toString());
                 Log.d("Baala Image Extracted URL", image_url);

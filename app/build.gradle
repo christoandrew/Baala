@@ -27,4 +27,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:20.0.0'
     compile 'com.google.android.gms:play-services:4.1.32'
     compile 'com.android.support:support-v4:20.0.0'
+    compile project(':progress')
+    compile project(':core')
+    compile project(':layouts')
+    compile 'com.android.support:recyclerview-v7:21.0.2'
 }

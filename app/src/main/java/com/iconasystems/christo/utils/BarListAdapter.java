@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,23 +33,34 @@ import java.util.List;
  */
 public class BarListAdapter extends BaseAdapter {
     private static final String TAG_BAR_ID = "bar_id";
+    private static final String TAG_NEW = "new";
+    private static final String TAG_POPULAR = "popular";
+    private static final String TAG_NOT_POPULAR = "not popular";
     private final Activity activity;
     private final ArrayList<HashMap<String, String>> barsList;
+    private final Typeface typefaceDesc;
     private LayoutInflater inflater;
     private ImageView mBarImage;
     private TextView mBarId;
     private TextView mBarName;
-    Typeface typeface;
+    private TextView mDesc;
+    private TextView mStatus;
+    private ImageView mNewIcon;
+    Typeface typefaceName;
     private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 
     private static final String TAG_BAR_IMAGE = "bar_image";
     private static final String TAG_BAR_NAME = "bar_name";
+    private static final String TAG_DESCRIPTION = "description";
+    private static final String TAG_POPULARITY = "popularity";
     private DisplayImageOptions options;
+    private String popularity;
 
-    public BarListAdapter(Activity activity, ArrayList<HashMap<String, String>> barsList, Typeface typeface) {
+    public BarListAdapter(Activity activity, ArrayList<HashMap<String, String>> barsList, Typeface typefaceName, Typeface desc) {
         this.activity = activity;
         this.barsList = barsList;
-        this.typeface = typeface;
+        this.typefaceName = typefaceName;
+        this.typefaceDesc = desc;
     }
 
     /**
@@ -120,24 +132,30 @@ public class BarListAdapter extends BaseAdapter {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (view == null) view = inflater.inflate(R.layout.bar_list_item, null);
 
+        mNewIcon = (ImageView) view.findViewById(R.id.new_icon);
         mBarImage = (ImageView) view.findViewById(R.id.bar_photo);
         mBarId = (TextView) view.findViewById(R.id.bar_list_id);
         mBarName = (TextView) view.findViewById(R.id.bar_list_name);
+        mDesc = (TextView) view.findViewById(R.id.description);
+        mStatus = (TextView) view.findViewById(R.id.status);
         HashMap<String, String> map;
         map = barsList.get(position);
 
         String bar_id = map.get(TAG_BAR_ID);
         String image_url = map.get(TAG_BAR_IMAGE);
         String bar_name = map.get(TAG_BAR_NAME);
+        String description = map.get(TAG_DESCRIPTION);
+        popularity = map.get(TAG_POPULARITY);
+
+       // Log.d("Baala Popularity", popularity);
+
+        mDesc.setText(description);
+        mDesc.setTypeface(typefaceDesc);
         mBarId.setText(bar_id);
         mBarName.setText(bar_name);
-        mBarName.setTypeface(typeface);
+        mBarName.setTypeface(typefaceName);
 
         ImageLoader.getInstance().displayImage(image_url, mBarImage, options, animateFirstListener);
-
-         /*Picasso.with(activity.getApplicationContext())
-                    .load(image_url)
-                    .into(mBarImage);*/
 
         return view;
     }

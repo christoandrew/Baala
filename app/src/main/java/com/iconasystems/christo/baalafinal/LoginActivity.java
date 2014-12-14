@@ -61,7 +61,7 @@ public class LoginActivity extends Activity implements PlusClient.ConnectionCall
 
     private JSONParser jsonParser = new JSONParser();
 
-    private static final String url_login = "http://10.0.3.2/baala/login.php";
+    private static final String url_login = "http://api.baala-online.netii.net/login.php";
 
 
     @Override

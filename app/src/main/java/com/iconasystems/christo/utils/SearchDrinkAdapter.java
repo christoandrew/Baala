@@ -98,7 +98,7 @@ public class SearchDrinkAdapter extends BaseAdapter {
 
         mDrinkId.setText(map.get(TAG_DRINK_ID));
         mDrinkName.setText(map.get(TAG_DRINK_NAME));
-        mDrinkPrice.setText(map.get(TAG_DRINK_PRICE));
+        mDrinkPrice.setText(new StringBuilder().append("Shs:").append(map.get(TAG_DRINK_PRICE)));
         mBarName.setText(new StringBuilder().append("At ").append(map.get(TAG_BAR_NAME)));
 
         String image_url = map.get(TAG_DRINK_IMAGE);

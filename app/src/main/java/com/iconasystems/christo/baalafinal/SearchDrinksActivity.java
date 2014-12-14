@@ -42,7 +42,7 @@ public class SearchDrinksActivity extends ListActivity implements SearchView.OnQ
     private ArrayList<HashMap<String, String>> drinksList;
     private String search_query;
 
-    private static final String url_search_drinks = "http://10.0.3.2/baala/find_drink.php";
+    private static final String url_search_drinks = "http://api.baala-online.netii.net/find_drink.php";
     private SearchView mSearchView;
 
     @Override
@@ -116,14 +116,14 @@ public class SearchDrinksActivity extends ListActivity implements SearchView.OnQ
 
     @Override
     public boolean onQueryTextSubmit(String s) {
-
+        new SearchDrinks().execute(s);
         return false;
     }
 
     @Override
     public boolean onQueryTextChange(String s) {
         search_query = s;
-        new SearchDrinks().execute(s);
+
         return false;
     }
 
@@ -203,6 +203,7 @@ public class SearchDrinksActivity extends ListActivity implements SearchView.OnQ
 
             SearchDrinkAdapter searchDrinkAdapter = new SearchDrinkAdapter(SearchDrinksActivity.this, drinksList);
             setListAdapter(searchDrinkAdapter);
+            searchDrinkAdapter.notifyDataSetChanged();
         }
     }
 }
